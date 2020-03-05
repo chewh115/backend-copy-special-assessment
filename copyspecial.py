@@ -9,6 +9,7 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
+import sys
 import re
 import os
 import shutil
@@ -16,7 +17,10 @@ import subprocess
 import argparse
 
 # This is to help coaches and graders identify student assignments
-__author__ = "chewh115"
+__author__ = """chewh115, with the aid of Geeks for Geeks and
+                Google's own os documentation"""
+if sys.version_info[0] < 3:
+    raise Exception('Hello! Please use python3!')
 
 
 def get_special_paths(fromdir):
@@ -28,18 +32,23 @@ def get_special_paths(fromdir):
         special_match = re.search(r'__(\w+)__', filename)
         if special_match:
             paths.append(os.path.abspath(os.path.join(fromdir, filename)))
-    print(paths)
     return paths
 
 
 def copy_to(paths, todir):
     """Given a list of paths, copies them into specified directory."""
-    pass
+    if not os.path.isdir(todir):
+        os.mkdir(todir)
+    print(todir)
+    for path in paths:
+        shutil.copy(path, todir)
 
 
 def zip_to(paths, zippath):
     """Given a list of paths, zip those files into specified zipfile"""
-    pass
+    command = 'zip -j {} {}'.format(zippath, ' '.join(paths))
+    print(f"Command I'm going to do {command}")
+    subprocess.run(command)
 
 
 def main():
@@ -59,7 +68,17 @@ def main():
     # print a usage message and exit(1).
 
     # +++your code here+++
-    # Call your functions
+    if not args:
+        parser.print_usage()
+        sys.exit(1)
+
+    paths = get_special_paths(fromdir)
+    if --todir:
+        copy_to(paths, todir)
+    elif --tozip:
+        zip_to(paths, tozip)
+    else:
+        print(paths)
 
 
 if __name__ == "__main__":
