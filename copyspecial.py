@@ -35,21 +35,21 @@ def get_special_paths(fromdir):
     return paths
 
 
-def copy_to(paths, todir):
+def copy_to(todir, files):
     """Given a list of paths, copies them into specified directory."""
-    if not os.path.isdir(todir):
-        os.mkdir(todir)
-    print(todir)
-    for path in paths:
-        shutil.copy(path, todir)
-        print(f"Copied {path} to {todir}")
+    if not os.path.exists(todir):
+        os.makedirs(todir)
+        print('Dir made')
+    for file in files:
+        shutil.copy(file, todir)
+        print("Copied {} to {}".format(file, todir))
 
 
 def zip_to(paths, zippath):
     """Given a list of paths, zip those files into specified zipfile"""
-    command = 'zip -j {} {}'.format(zippath, ' '.join(paths))
-    print("Command I'm going to do: {}".format(command))
-    subprocess.run(command)
+    command = ['zip', '-j', str(zippath)]
+    print("Command I'm going to do: {}".format(' '.join(command)))
+    subprocess.call(command + paths)
 
 
 def main():
@@ -63,14 +63,13 @@ def main():
         parser.print_usage()
         sys.exit(1)
 
-    paths = get_special_paths(args.fromdir)
+    file_paths = get_special_paths(args.fromdir)
     if args.todir:
-        copy_to(paths, args.todir)
-    elif args.tozip:
-        zip_to(paths, args.tozip)
-    else:
-        for file in paths:
-            print(file)
+        copy_to(args.todir, file_paths)
+    if args.tozip:
+        zip_to(file_paths, args.tozip)
+    if not args.todir and not args.tozip:
+        print('\n'.join(file_paths))
 
 
 if __name__ == "__main__":
